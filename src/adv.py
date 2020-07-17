@@ -1,4 +1,6 @@
 from room import Room
+from player import Player
+from item import Item
 
 # Declare all the rooms
 
@@ -34,10 +36,40 @@ room['narrow'].n_to = room['treasure']
 room['treasure'].s_to = room['narrow']
 
 #
+items = {
+    'broom': Item('broom', 'A broom for clearing debris'),
+    'key': Item('key', 'a key for opening doors'),
+    'sword': Item('sword', 'a sword for slicing people'),
+    'bag': Item('bag', 'a bag for holding items easier'),
+    'hat': Item('hat', 'a indiana jones style hat'),
+    'light': Item('light', 'a light for seeing things')
+}
+
+room['outside'].addItem(items['broom'])
+room['outside'].addItem(items['key'])
+room['foyer'].addItem(items['sword'])
+room['overlook'].addItem(items['hat'])
+room['narrow'].addItem(items['light'])
+room['treasure'].addItem(items['bag'])
+
+
+#
 # Main
 #
 
 # Make a new player object that is currently in the 'outside' room.
+
+
+print('Welcome to our adventure game!')
+playerName = input('Please enter your name: ')
+p = Player(playerName, room['outside'])
+
+# figuring out how i want to access and change rooms
+# print(p.room.n_to)
+
+#p.room = p.room.n_to
+# print(p)
+# print(f'whats north now? {p.room.n_to}')F
 
 # Write a loop that:
 #
@@ -49,3 +81,39 @@ room['treasure'].s_to = room['narrow']
 # Print an error message if the movement isn't allowed.
 #
 # If the user enters "q", quit the game.
+
+'''print(p.__dict__)
+print(p.room.__dict__)
+print(p.room.n_to.__dict__) '''  # testing what gets returned with the __dict__
+
+
+def validMove(movement):
+    currentRoom = p.room
+    if currentRoom.__dict__[f'{movement}_to'] == None:
+        print("There is nothing that direction!")
+    else:
+        p.room = currentRoom.__dict__[f'{movement}_to']
+
+
+while True:
+    currentRoom = p.room
+    movementChoice = ['n', 'e', 's', 'w']
+    items = p.room.items
+
+    print(f"Here's you're info: \n {p}")
+    print(f'\nItems in this area:  ')
+    for i in items:
+        print(i)
+
+    print('\n')
+    userChoice = input(
+        'What do you want to do? You can Move n, e, s, or w...or you can "pickup" or "drop" items --drop sword-- You can also enter q to quit: ')
+
+    if userChoice in movementChoice:
+        validMove(userChoice)
+
+    elif userChoice == "q":
+        print("Thanks for playing!")
+        exit()
+    else:
+        print("\nThat is not allowed movement input.")
